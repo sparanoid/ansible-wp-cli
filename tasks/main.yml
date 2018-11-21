@@ -1,0 +1,27 @@
+---
+- name: check if wp-cli installed
+  stat:
+    path: "{{ bin_root }}/wp"
+  register: wp_cli_bin
+  tags:
+    - wp
+    - wp_cli
+
+- name: update wp-cli
+  shell: "{{ bin_root }}/wp cli update --yes"
+  when: wp_cli_bin.stat.exists
+  tags:
+    - wp
+    - wp_cli
+    - update
+
+- name: download wp-cli
+  get_url:
+    url: "{{ bin_download_url }}"
+    dest: "{{ bin_root }}/wp"
+    mode: 0755
+  when: not wp_cli_bin.stat.exists
+  tags:
+    - wp
+    - wp_cli
+    - install
